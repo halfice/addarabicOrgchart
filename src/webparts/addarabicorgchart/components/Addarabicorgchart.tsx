@@ -15,6 +15,7 @@ import {
 import { IOrgChartViewerState } from './IOrgChartViewerState';
 import { IOrgChartItem, ChartItem } from './IOrgChartItem';
 import { IDataNode, OrgChartNode } from './OrgChartNode';
+import { default as pnp, ItemAddResult, Web, ConsoleListener } from "sp-pnp-js";
 
 
 
@@ -52,6 +53,35 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
 
   public componentDidMount() {
     this.processOrgChartItems();
+    var NewISiteUrl = this.props.siteUrl;
+    var NewSiteUrl = NewISiteUrl.replace("/SitePages", "");
+    let webx = new Web(NewSiteUrl);
+
+
+    pnp.sp.profiles.myProperties.get().then(d => {
+
+      var data=JSON.stringify(d);
+      for(var i = 0; i < data.length; i++)
+      {
+         // alert(data[i]['price']);
+      }
+      //console.log(data);
+
+  });
+
+
+
+    var _tems = [];
+
+
+
+
+    webx.currentUser.get().then((user) => {
+      console.log("This is user :"+user);
+      return user;
+  });
+
+
   }
   private processOrgChartItems(): void {
     this.readOrgChartItems()
