@@ -7,4 +7,10 @@ export interface IAddarabicorgchartProps {
   orgChartItems: any;
   currentText:string;
   myglobalArray:Array<object>;
+  pagelcass:string;
+  IsArabic: boolean;
+  siteurl: string;
+  languagelabel:string;
+  culture:string;
+  headingname:string;
 }

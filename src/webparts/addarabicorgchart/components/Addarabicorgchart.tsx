@@ -30,9 +30,11 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
       listName: this.props.listName,
       currentText:"",
       myglobalArray:[],
-
-
-
+      IsArabic: false,
+      languagelabel: "EN",
+      culture: this.props.culture,
+      headingname:"Organiztion Chart - ADDA",
+      pagelcass:"pageclassenorg",
     });
     this.callalert = this.callalert.bind(this);
 
@@ -43,6 +45,8 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
      */
   }
   public acronym(str) {
+
+
     var abbr = "";
     str = str.split(' ');
     for (var i = 0; i < str.length; i++) {
@@ -51,12 +55,43 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
     return abbr;
   }
 
+
+  public acronymar(str) {
+
+    var abbr = "";
+    str = str.split(' ');
+    //for (var i = 0; i < str.length; i++) {
+     // abbr =;//+= str[i].substr(0, 1);
+   // }
+    return abbr=str[0];
+  }
+
   public componentDidMount() {
+
+
+    var Pageurl = window.location.href;
+    var tmpLang = "en";
+    var Tempcss = "pageclassen";
+    var temp = false;
+    var finalnameheading="Organization Chart"
+    var csstmp = "mydivcommandbar";
+    if (Pageurl.indexOf("/ar/") > -1) {
+      tmpLang = "arabic";
+      csstmp = "mydivcommandbarAR";
+      temp = true;
+      Tempcss = "pageclassarorg";
+      finalnameheading="الهيكل التنظيمي";
+    }
+
+
+
+
+
+
     this.processOrgChartItems();
     var NewISiteUrl = this.props.siteUrl;
     var NewSiteUrl = NewISiteUrl.replace("/SitePages", "");
     let webx = new Web(NewSiteUrl);
-
 
     pnp.sp.profiles.myProperties.get().then(d => {
 
@@ -81,6 +116,17 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
       return user;
   });
 
+  this.setState({
+    languagelabel: tmpLang,
+    menucss: csstmp,
+    IsArabic: temp,
+    pagelcass: Tempcss,
+    headingname:finalnameheading,
+
+
+
+  });
+
 
   }
   private processOrgChartItems(): void {
@@ -90,20 +136,50 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
         let orgChartNodes: Array<ChartItem> = [];
         let TempGlobal: Array<object> = [];
         var count: number;
+
+
+        var Pageurl = window.location.href;
+
+
+
+
+
+
         for (count = 0; count < orgChartItems.length; count++) {
-          if (orgChartItems[count].Title!="ADDA")
-          var getTitle=this.acronym(orgChartItems[count].Title);
+          var getTitle="";
+          if (orgChartItems[count].Title!="ADDA"){
+            if (Pageurl.indexOf("/ar/") > -1) {
+            //  getTitle=orgChartItems[count].TitleAr;
+              getTitle=this.acronymar(orgChartItems[count].TitleAr);
+            }
+            else{
+               getTitle=this.acronym(orgChartItems[count].Title);
+            }
+          }
+
         else
-        getTitle=orgChartItems[count].Title;
+        {
+          if (Pageurl.indexOf("/ar/") > -1) {
+            getTitle=orgChartItems[count].TitleAr;
+          }
+          else{
+            getTitle=orgChartItems[count].Title;
+          }
+        }
+
 
         var obj={
           acc:getTitle,
           name:orgChartItems[count].Title,
+          narmar:orgChartItems[count].TitleAr
         };
 
 
         TempGlobal.push(obj);
-          orgChartNodes.push(new ChartItem(orgChartItems[count].Id, getTitle, orgChartItems[count].Url, orgChartItems[count].Parent ? orgChartItems[count].Parent.Id : undefined));
+          orgChartNodes.push(new ChartItem(orgChartItems[count].Id,
+            getTitle,
+            orgChartItems[count].Url,
+            orgChartItems[count].Parent ? orgChartItems[count].Parent.Id : undefined));
         }
 
         var arrayToTree: any = require('array-to-tree');
@@ -118,7 +194,7 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
   }
   private readOrgChartItems(): Promise<IOrgChartItem[]> {
     return new Promise<IOrgChartItem[]>((resolve: (itemId: IOrgChartItem[]) => void, reject: (error: any) => void): void => {
-      this.props.spHttpClient.get(`${this.props.siteUrl}/_api/web/lists/getbytitle('${this.props.listName}')/items?$select=Title,Id,Url,Parent/Id,Parent/Title&$expand=Parent/Id&$orderby=Parent/Id asc`,
+      this.props.spHttpClient.get(`${this.props.siteUrl}/_api/web/lists/getbytitle('${this.props.listName}')/items?$select=Title,TitleAr,Id,Url,Parent/Id,Parent/Title&$expand=Parent/Id&$orderby=Parent/Id asc`,
         SPHttpClient.configurations.v1,
         {
           headers: {
@@ -141,10 +217,31 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
 
     var item=this.state.myglobalArray;
     var filteredarray = item.filter(menu =>  menu["acc"] == e.target.innerText);
-    console.log("This is fildtered Array : " + filteredarray);
+    console.log("This is fildtered Array : " + filteredarray[0]);
    //alert(e.target.id);
+
+   var Pageurl = window.location.href;
+   var tmpLang = "en";
+   var Tempcss = "pageclassen";
+   var temp = false;
+   var csstmp = "mydivcommandbar";
+   var finalstr="";
+   if (Pageurl.indexOf("/ar/") > -1) {
+    finalstr=filteredarray[0]["narmar"]
+   }
+   else{
+    finalstr=filteredarray[0]["name"]
+   }
+//alert(finalstr);
+
+
+
+
+
+
+
    this.setState({
-     currentText:filteredarray[0]["name"],
+     currentText:finalstr ,
    });
   }
   private MyNodeComponent = ({ node }) => {
@@ -165,14 +262,25 @@ export default class Addarabicorgchart extends React.Component<IAddarabicorgchar
     return (
       <div className={styles.addarabicorgchart}>
         <div className={styles.container}>
-        <div className="myrows">
-          <h3>Organiztion Chart - ADDA </h3>
-        </div>
+          <div className="mainheading" >
+          {this.state !=null &&
+            <div className={this.state.pagelcass}>
+             {this.state.headingname}
+            </div>
+
+          }
+
+
+
+
+          </div>
+
           <div className={styles.row}>
             <div >
               {
                 this.state != null && this.state.orgChartItems != null &&
-                <OrgChart  tree={this.state.orgChartItems} NodeComponent={this.MyNodeComponent} pan={true} zoom={true} />
+                <OrgChart  tree={this.state.orgChartItems} NodeComponent={this.MyNodeComponent}
+                 pan={true} zoom={true} />
 
               }
             </div>

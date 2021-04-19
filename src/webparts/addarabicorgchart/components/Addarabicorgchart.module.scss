@@ -9,11 +9,22 @@
     text-align: center;
     font-size: 22px;
 }
+
+:global(.pageclassenorg){
+direction: ltr!important;
+float:left;
+}
+
+:global(.pageclassarorg){
+  direction: rtl!important;
+  float: right!important;
+}
+
 :global(.initechNode) {
   border: 1px solid;
   border-radius: 3px;
-  padding: 5px;
-  margin: 1px;
+  padding: 1px;
+  margin: 0px;
   display: inline-block;
   background: #005a9e;
 }

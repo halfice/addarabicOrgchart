@@ -13,6 +13,8 @@ import { IAddarabicorgchartProps } from './components/IAddarabicorgchartProps';
 
 export interface IAddarabicorgchartWebPartProps {
   listName: string;
+  culture:string;
+
 }
 
 export default class AddarabicorgchartWebPart extends BaseClientSideWebPart <IAddarabicorgchartWebPartProps> {
@@ -23,7 +25,9 @@ export default class AddarabicorgchartWebPart extends BaseClientSideWebPart <IAd
       {
         listName: this.properties.listName,
         spHttpClient: this.context.spHttpClient,
-        siteUrl: this.context.pageContext.web.absoluteUrl
+        siteUrl: this.context.pageContext.web.absoluteUrl,
+
+        culture:this.context.pageContext.cultureInfo.currentCultureName,
       }
     );
 

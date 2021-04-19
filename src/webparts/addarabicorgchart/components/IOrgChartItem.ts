@@ -1,5 +1,6 @@
 export interface IOrgChartItem {
     Title: string;
+    TitleAr:string;
     Id: number;
     parent_id: number;
     Url?: string;
